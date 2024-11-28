@@ -3,16 +3,30 @@ from telethon import TelegramClient
 
 
 class TeleClientSingleton(TelegramClient):
-    _instance = None
+    client = None
+    # bot = None
 
     def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-
-            cls._instance = TelegramClient(
-                session=os.getenv("SESSION"),
+        # if not cls.bot:
+        #     cls.bot = TelegramClient(
+        #         session="telethon_bot_session",
+        #         api_id=int(os.getenv("API_ID")),
+        #         api_hash=os.getenv("API_HASH"),
+        #     ).start(
+        #         bot_token=os.getenv("BOT_TOKEN"),
+        #     )
+        if not cls.client:
+            cls.client = TelegramClient(
+                session="his_telethon_client_session",
                 api_id=int(os.getenv("API_ID")),
                 api_hash=os.getenv("API_HASH"),
             ).start(
-                bot_token=os.getenv("BOT_TOKEN"),
+                phone=os.getenv("PHONE"),
             )
-        return cls._instance
+
+        return cls
+
+    @classmethod
+    def disconnect_all(cls):
+        # cls.bot.disconnect()
+        cls.client.disconnect()

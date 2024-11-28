@@ -78,3 +78,18 @@ def build_request_buttons():
         ],
     ]
     return keyboard
+
+
+def build_confirmation_keyboard(data: str):
+    return [
+        [
+            InlineKeyboardButton(
+                text="نعم 👍",
+                callback_data=f"yes {data}",
+            ),
+            InlineKeyboardButton(
+                text="لا 👎",
+                callback_data=f"no {data}",
+            ),
+        ]
+    ]

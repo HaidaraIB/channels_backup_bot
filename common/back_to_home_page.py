@@ -26,7 +26,7 @@ back_to_user_home_page_button = [
 ]
 
 
-@check_if_user_member_decorator
+# @check_if_user_member_decorator
 async def back_to_user_home_page(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE:
         await update.callback_query.edit_message_text(

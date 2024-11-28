@@ -9,12 +9,15 @@ from common.back_to_home_page import (
 from common.error_handler import error_handler
 from common.force_join import check_joined_handler
 
+from TeleClientSingleton import TeleClientSingleton
+
 from user.user_calls import *
 
 from admin.admin_calls import *
 from admin.admin_settings import *
 from admin.broadcast import *
 from admin.ban import *
+from admin.backup_settings import *
 
 from models import create_tables
 
@@ -44,6 +47,13 @@ def main():
 
     app.add_handler(ban_unban_user_handler)
 
+    app.add_handler(backup_handler)
+    app.add_handler(set_channel_commands)
+    app.add_handler(show_channels_command)
+    app.add_handler(cancel_running_backup_handler)
+    app.add_handler(set_text_need_to_change_handler)
+    app.add_handler(show_texts_need_to_change_command)
+
     app.add_handler(admin_command)
     app.add_handler(start_command)
     app.add_handler(find_id_handler)
@@ -53,4 +63,8 @@ def main():
 
     app.add_error_handler(error_handler)
 
-    app.run_polling(allowed_updates=Update.ALL_TYPES)
+    tele_client = TeleClientSingleton()
+
+    app.run_polling(allowed_updates=Update.ALL_TYPES, close_loop=False)
+
+    tele_client.disconnect_all()

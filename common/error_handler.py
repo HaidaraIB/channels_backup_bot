@@ -30,11 +30,6 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
 
     write_error(error)
 
-    await context.bot.send_message(
-        chat_id=int(os.getenv("ERRORS_CHANNEL")),
-        text=f"<pre>{html.escape(tb_string)}</pre>",
-    )
-
 
 def write_error(error: str):
     with open("errors.txt", "a", encoding="utf-8") as f:

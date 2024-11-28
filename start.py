@@ -15,6 +15,7 @@ from common.decorators import (
 )
 from common.keyboards import build_user_keyboard, build_admin_keyboard
 from common.common import check_hidden_keyboard
+from admin.backup_settings.common import set_channel_commands
 
 
 async def inits(app: Application):
@@ -26,6 +27,19 @@ async def set_commands(update: Update, context: ContextTypes.DEFAULT_TYPE):
     commands = [st_cmd]
     if Admin().filter(update):
         commands.append(("admin", "admin command"))
+        commands.append(("show_texts_need_to_change", "show texts need to change"))
+        commands.append(("show_channels", "show channels"))
+        commands.append(("set_text_need_to_change", "set text need to change"))
+        commands.append(("cancel_backup", "cancel backup"))
+        commands.append(("start_backup", "start backup"))
+        commands.append(("cancel", "cancel"))
+        for channel_command in set_channel_commands:
+            commands.append(
+                (
+                    channel_command,
+                    channel_command.replace("/", "").replace("_", " "),
+                )
+            )
     await context.bot.set_my_commands(
         commands=commands, scope=BotCommandScopeChat(chat_id=update.effective_chat.id)
     )
@@ -33,7 +47,7 @@ async def set_commands(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 @add_new_user_dec
 @check_if_user_banned_dec
-@check_if_user_member_decorator
+# @check_if_user_member_decorator
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE:
         await set_commands(update, context)
