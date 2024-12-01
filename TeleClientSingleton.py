@@ -1,5 +1,6 @@
 import os
 from telethon import TelegramClient
+from config import SESSION
 
 
 class TeleClientSingleton(TelegramClient):
@@ -17,7 +18,7 @@ class TeleClientSingleton(TelegramClient):
         #     )
         if not cls.client:
             cls.client = TelegramClient(
-                session="telethon_client_session",
+                session=SESSION,
                 api_id=int(os.getenv("API_ID")),
                 api_hash=os.getenv("API_HASH"),
             ).start(
