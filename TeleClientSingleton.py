@@ -17,7 +17,7 @@ class TeleClientSingleton(TelegramClient):
         #     )
         if not cls.client:
             cls.client = TelegramClient(
-                session="his_telethon_client_session",
+                session="telethon_client_session",
                 api_id=int(os.getenv("API_ID")),
                 api_hash=os.getenv("API_HASH"),
             ).start(

@@ -1,5 +1,6 @@
 from telegram import Update
 from telegram.ext import CallbackQueryHandler, InvalidCallbackData
+from telethon import events
 from start import start_command, admin_command
 from common.common import invalid_callback_data, create_folders
 from common.back_to_home_page import (
@@ -8,6 +9,8 @@ from common.back_to_home_page import (
 )
 from common.error_handler import error_handler
 from common.force_join import check_joined_handler
+
+from admin.backup_settings.backup_new_messages import backup_message
 
 from TeleClientSingleton import TeleClientSingleton
 
@@ -64,6 +67,15 @@ def main():
     app.add_error_handler(error_handler)
 
     tele_client = TeleClientSingleton()
+
+    tele_client.client.add_event_handler(
+        callback=backup_message,
+        event=events.NewMessage,
+    )
+    tele_client.client.add_event_handler(
+        callback=backup_message,
+        event=events.Album,
+    )
 
     app.run_polling(allowed_updates=Update.ALL_TYPES, close_loop=False)
 

@@ -6,5 +6,5 @@ from admin.backup_settings.show_info import (
 from admin.backup_settings.set_text_need_to_change import (
     set_text_need_to_change_handler,
 )
-from admin.backup_settings.backup import backup_handler
+from admin.backup_settings.start_backup import backup_handler
 from admin.backup_settings.cancel_running_backup import cancel_running_backup_handler

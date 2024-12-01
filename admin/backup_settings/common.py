@@ -60,7 +60,14 @@ async def perform_backup(
         tele_client = TeleClientSingleton()
         if not context.bot_data.get("texts_need_to_change", False):
             context.bot_data["texts_need_to_change"] = {}
-        async for msg in tele_client.client.iter_messages(entity=vip_channel):
+
+        current_grouped_id = 0
+        gallery = []
+
+        async for msg in tele_client.client.iter_messages(
+            entity=vip_channel,
+            reverse=False,
+        ):
             if not isinstance(msg, Message):
                 continue
             msg: Message = msg
@@ -70,8 +77,35 @@ async def perform_backup(
                 ].items():
                     if msg.text:
                         msg.text = msg.text.replace(change_from, change_to)
-                await tele_client.client.send_message(entity=backup_channel, message=msg)
-                await asyncio.sleep(5)
+
+                if not msg.grouped_id:
+                    if gallery:
+                        await tele_client.client.send_file(
+                            entity=backup_channel,
+                            file=gallery,
+                            caption=[m.text for m in gallery],
+                        )
+                        gallery = []
+                        current_grouped_id = 0
+                        await asyncio.sleep(5)
+                    await tele_client.client.send_message(
+                        entity=backup_channel, message=msg
+                    )
+                    await asyncio.sleep(5)
+                else:
+                    if current_grouped_id != 0 and msg.grouped_id != current_grouped_id:
+                        gallery.append(msg)
+                        await tele_client.client.send_file(
+                            entity=backup_channel,
+                            file=gallery,
+                            caption=[m.text for m in gallery],
+                        )
+                        gallery = []
+                        current_grouped_id = msg.grouped_id
+                        await asyncio.sleep(5)
+                    else:
+                        gallery.append(msg)
+                        current_grouped_id = msg.grouped_id
             else:
                 await context.bot.send_message(
                     chat_id=admin_id,
@@ -92,9 +126,7 @@ async def perform_backup(
         )
     except Exception as e:
         import traceback
-        tb_list = traceback.format_exception(
-            None, e, e.__traceback__
-        )
+
+        tb_list = traceback.format_exception(None, e, e.__traceback__)
         tb_string = "".join(tb_list)
         write_error(tb_string + "\n\n")
-        
