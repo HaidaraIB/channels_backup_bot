@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, PrimaryKeyConstraint, select, insert, delete
+from sqlalchemy import Column, Integer, PrimaryKeyConstraint, select, insert
 from models.DB import Base, connect_and_close, lock_and_release
 from sqlalchemy.orm import Session
 

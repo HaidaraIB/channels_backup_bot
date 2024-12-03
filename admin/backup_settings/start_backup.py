@@ -13,6 +13,7 @@ from admin.backup_settings.common import (
     perform_backup,
 )
 from common.keyboards import build_confirmation_keyboard
+from start import admin_command
 import asyncio
 
 VIP_CHANNEL, BACKUP_CHANNEL, CONFIRM_BACKUP, CONFIRM_CANCEL_BACKUP = range(4)
@@ -122,13 +123,12 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return ConversationHandler.END
 
 
+start_backup_command = CommandHandler(
+    "start_backup",
+    backup,
+)
 backup_handler = ConversationHandler(
-    entry_points=[
-        CommandHandler(
-            "start_backup",
-            backup,
-        )
-    ],
+    entry_points=[start_backup_command],
     states={
         VIP_CHANNEL: [
             CallbackQueryHandler(
@@ -156,9 +156,11 @@ backup_handler = ConversationHandler(
         ],
     },
     fallbacks=[
+        admin_command,
+        start_backup_command,
         CommandHandler(
             "cancel",
             cancel,
-        )
+        ),
     ],
 )

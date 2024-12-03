@@ -8,7 +8,6 @@ from common.back_to_home_page import (
     back_to_user_home_page_handler,
 )
 from common.error_handler import error_handler
-from common.force_join import check_joined_handler
 
 from admin.backup_settings.backup_new_messages import backup_message
 
@@ -45,8 +44,6 @@ def main():
     app.add_handler(remove_admin_handler)
 
     app.add_handler(broadcast_message_handler)
-
-    app.add_handler(check_joined_handler)
 
     app.add_handler(ban_unban_user_handler)
 

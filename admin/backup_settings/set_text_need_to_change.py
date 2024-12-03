@@ -7,7 +7,8 @@ from telegram.ext import (
     filters,
 )
 from custom_filters import Admin
-
+from start import admin_command
+import models
 
 ORIGINAL, REPLACE = range(2)
 
@@ -31,6 +32,10 @@ async def get_replace(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
         origianl_text = context.user_data["original_text_to_change"]
         context.bot_data["texts_need_to_change"][origianl_text] = update.message.text
+        await models.TextNeedToChange.add(
+            change_from=origianl_text,
+            change_to=update.message.text,
+        )
         await update.message.reply_text(text="تمت العملية بنجاح ✅")
         return ConversationHandler.END
 
@@ -41,12 +46,13 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return ConversationHandler.END
 
 
+set_text_need_to_change_command = CommandHandler(
+    "set_text_need_to_change",
+    set_text_need_to_change,
+)
 set_text_need_to_change_handler = ConversationHandler(
     entry_points=[
-        CommandHandler(
-            "set_text_need_to_change",
-            set_text_need_to_change,
-        ),
+        set_text_need_to_change_command,
     ],
     states={
         ORIGINAL: [
@@ -63,6 +69,8 @@ set_text_need_to_change_handler = ConversationHandler(
         ],
     },
     fallbacks=[
+        admin_command,
+        set_text_need_to_change_command,
         CommandHandler(
             "cancel",
             cancel,

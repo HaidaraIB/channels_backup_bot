@@ -6,6 +6,7 @@ from telegram.ext import (
     CallbackQueryHandler,
 )
 from custom_filters import Admin
+from start import admin_command
 from common.keyboards import build_confirmation_keyboard
 
 RUNNING_BACKUP, CONFIRM_CANCEL_RUNNING_BACKUP = range(2)
@@ -70,13 +71,12 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return ConversationHandler.END
 
 
+cancel_running_backup_command = CommandHandler(
+    "cancel_backup",
+    cancel_running_backup,
+)
 cancel_running_backup_handler = ConversationHandler(
-    entry_points=[
-        CommandHandler(
-            "cancel_backup",
-            cancel_running_backup,
-        )
-    ],
+    entry_points=[cancel_running_backup_command],
     states={
         RUNNING_BACKUP: [
             CallbackQueryHandler(
@@ -92,9 +92,11 @@ cancel_running_backup_handler = ConversationHandler(
         ],
     },
     fallbacks=[
+        admin_command,
+        cancel_running_backup_command,
         CommandHandler(
             "cancel",
             cancel,
-        )
+        ),
     ],
 )
