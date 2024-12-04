@@ -66,7 +66,7 @@ async def perform_backup(
 
         async for msg in tele_client.client.iter_messages(
             entity=vip_channel,
-            reverse=False,
+            reverse=True,
         ):
             if not isinstance(msg, Message):
                 continue
